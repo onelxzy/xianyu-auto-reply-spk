@@ -30,7 +30,9 @@ export TMPDIR="${SYNOPKG_PKGVAR}/tmp"
 export TZ="Asia/Shanghai"
 
 # 程序全部参数由环境变量提供（见 internal/config/config.go）
-export LISTEN_ADDR=":${SERVICE_PORT}"
+# 默认监听全部网卡（局域网可直连）；如需只监听回环并前置反向代理，
+# 可在 listen.conf 中直接写 LISTEN_ADDR=127.0.0.1:18089
+export LISTEN_ADDR="${LISTEN_ADDR:-:${SERVICE_PORT}}"
 export DATA_DIR="${DATA_ROOT}"
 export DATABASE_PATH="${DATA_ROOT}/xianyu.db"
 export STATIC_DIR="${SYNOPKG_PKGDEST}/frontend/dist"
@@ -44,6 +46,10 @@ SVC_WRITE_PID=y
 service_prestart ()
 {
     mkdir -p "${DATA_ROOT}" "${TMPDIR}"
-    chmod 700 "${DATA_ROOT}" 2>/dev/null
+    # 数据目录存放 SQLite 数据库（内含账号 Cookie、第三方密钥明文）与上传文件，
+    # 上游以 0755/0644 创建，这里每次启动收紧一次，避免升级或恢复后权限被放宽。
+    chmod 700 "${DATA_ROOT}" "${TMPDIR}" 2>/dev/null
+    find "${DATA_ROOT}" -type d -exec chmod 700 {} + 2>/dev/null
+    find "${DATA_ROOT}" -type f -exec chmod 600 {} + 2>/dev/null
     return 0
 }
