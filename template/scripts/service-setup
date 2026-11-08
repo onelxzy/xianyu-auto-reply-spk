@@ -1,0 +1,49 @@
+### 通用变量
+### -------------------------------
+
+if [ -z "${SYNOPKG_PKGNAME}" ] || [ -z "${SYNOPKG_DSM_VERSION_MAJOR}" ]; then
+  echo "Error: Environment variables are not set." 1>&2
+  echo "Please run me using synopkg instead." 1>&2
+  exit 1
+fi
+
+USER="xianyu-auto-reply"
+EFF_USER="xianyu-auto-reply"
+
+# 默认监听端口。可在 ${SYNOPKG_PKGVAR}/listen.conf 中写入 PORT=xxxx 覆盖，
+# 修改后需重启套件，并同步调整 DSM 里的访问地址。
+DEFAULT_PORT="18089"
+PORT_FILE="${SYNOPKG_PKGVAR}/listen.conf"
+if [ -r "${PORT_FILE}" ]; then
+  . "${PORT_FILE}"
+fi
+SERVICE_PORT="${PORT:-${DEFAULT_PORT}}"
+
+DATA_ROOT="${SYNOPKG_PKGVAR}/data"
+LOG_FILE="${SYNOPKG_PKGVAR}/${SYNOPKG_PKGNAME}.log"
+PID_FILE="${SYNOPKG_PKGVAR}/${SYNOPKG_PKGNAME}.pid"
+
+### 进程运行环境
+### ----------------------------------------
+
+export TMPDIR="${SYNOPKG_PKGVAR}/tmp"
+export TZ="Asia/Shanghai"
+
+# 程序全部参数由环境变量提供（见 internal/config/config.go）
+export LISTEN_ADDR=":${SERVICE_PORT}"
+export DATA_DIR="${DATA_ROOT}"
+export DATABASE_PATH="${DATA_ROOT}/xianyu.db"
+export STATIC_DIR="${SYNOPKG_PKGDEST}/frontend/dist"
+
+SERVICE_COMMAND="${SYNOPKG_PKGDEST}/bin/xianyu-go"
+SVC_CWD="${SYNOPKG_PKGVAR}"
+SVC_BACKGROUND=y
+SVC_WRITE_PID=y
+
+# 启动前准备数据目录（以套件账号身份创建，DSM 已把 var 目录归属该账号）
+service_prestart ()
+{
+    mkdir -p "${DATA_ROOT}" "${TMPDIR}"
+    chmod 700 "${DATA_ROOT}" 2>/dev/null
+    return 0
+}

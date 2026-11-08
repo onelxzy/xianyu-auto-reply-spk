@@ -1,0 +1,7 @@
+{
+  "defaults": {
+    "run-as": "package"
+  },
+  "username": "xianyu-auto-reply",
+  "groupname": "xianyu-auto-reply"
+}

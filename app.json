@@ -1,0 +1,37 @@
+{
+  "package_id": "xianyu-auto-reply",
+  "display_name": "闲鱼自动回复",
+  "type": "binary",
+  "upstream_repo": "Heartestrella/xianyu-auto-reply-golang",
+  "description": "Self-hosted auto-reply service for the Xianyu marketplace, written in Go with a built-in web console and SQLite storage.",
+  "description_chs": "闲鱼自动回复服务，Golang 轻量实现，内置 Web 管理界面，使用 SQLite 本地存储。",
+  "maintainer": "Heartestrella",
+  "maintainer_url": "https://github.com/Heartestrella/xianyu-auto-reply-golang",
+  "distributor": "onelxzy",
+  "distributor_url": "https://github.com/onelxzy",
+  "os_min_ver": "7.0-40851",
+  "category": "Utilities",
+  "changelog": "自动构建，对应上游 {tag}。",
+  "architectures": [
+    {
+      "family": "x86_64",
+      "syno_arch": "apollolake avoton braswell broadwell broadwellnk broadwellnkv2 broadwellntbap bromolow cedarview denverton dockerx64 epyc7002 epyc7003 epyc7003ntb geminilake geminilakenk grantley icelaked kvmx64 purley r1000 r1000nk v1000 v1000nk x86 x86_64",
+      "asset_pattern": "^xianyu-go-linux-amd64\\.tar\\.gz$",
+      "binary_path": "xianyu-go",
+      "binary_dest": "bin/xianyu-go",
+      "extra_dirs": [
+        "frontend"
+      ]
+    },
+    {
+      "family": "arm",
+      "syno_arch": "armv8 rtd1296 rtd1619b aarch64 armada37xx v1000",
+      "asset_pattern": "^xianyu-go-linux-arm64\\.tar\\.gz$",
+      "binary_path": "xianyu-go",
+      "binary_dest": "bin/xianyu-go",
+      "extra_dirs": [
+        "frontend"
+      ]
+    }
+  ]
+}
